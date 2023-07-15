@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
+import {LinkToken} from "../test/mocks/LinkToken.sol";
 
 contract HelperConfig is Script {
     struct NetworkConfig {
@@ -14,7 +15,10 @@ contract HelperConfig is Script {
         uint64 subscriptionId;
         uint32 callbackGasLimit;
         address link;
+        uint256 deployerKey;
     }
+    uint256 public constant DEFAULT_ANVIL_PRIVATE_KEY =
+        0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
     NetworkConfig public activeNetworkConfig;
 
     constructor() {
@@ -34,7 +38,8 @@ contract HelperConfig is Script {
                 gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c, // aka keyHash
                 subscriptionId: 3481, // Update with our subscription Id
                 callbackGasLimit: 500000, // 500,000 gas
-                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789 // LINK token contract on Sepolia
+                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789, // LINK token contract on Sepolia
+                deployerKey: vm.envUint("PRIVATE_KEY") // get the PRIVATE_KEY from .env file
             });
     }
 
@@ -51,6 +56,7 @@ contract HelperConfig is Script {
             baseFee,
             gasPriceLink
         ); // requires 2 params: baseFee and gasPriceLink
+        LinkToken link = new LinkToken();
         vm.stopBroadcast();
 
         return
@@ -61,7 +67,8 @@ contract HelperConfig is Script {
                 gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c, // anything is okay here
                 subscriptionId: 0, // Our script will add this
                 callbackGasLimit: 500000, // 500,000 gas
-                mockLink: address(vrfCoordinatorMock.link())
+                link: address(link),
+                deployerKey: DEFAULT_ANVIL_PRIVATE_KEY
             });
     }
 }

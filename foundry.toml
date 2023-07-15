@@ -2,6 +2,7 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-remappings = ['@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts']
+# For remapping, everything will be directed to remappings.txt instead of inside this TOML file
+# remappings = ['@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts']
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
