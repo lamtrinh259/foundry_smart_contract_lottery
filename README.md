@@ -28,3 +28,6 @@
 - callbackGasLimit is the maximum amount of gas to use for the callback function
 - requestConfirmations is the number of blocks need to go by, higher is more secure, but slower
 - numWords is the number of random numbers that we're getting back. Minimum is 1.
+3. I can check for function signature hex data on this online database: [openchain.xyz](https://www.openchain.xyz/)
+E.g. type in 0xa21a23e4 to get the createSubscription() function
+4.
