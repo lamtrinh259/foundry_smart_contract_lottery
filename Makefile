@@ -3,6 +3,7 @@
 .PHONY: all test clean deploy fund help install snapshot format anvil
 
 DEFAULT_ANVIL_KEY := 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+DEPLOYED_CONTRACT_ADDRESS := 0xdbfda4b19ff56230a75a11ef4011eaeb63181867
 
 help:
 	@echo "Usage:"
@@ -40,7 +41,7 @@ ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
 	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
 
-deploy: # The @ sign helps to mask the private key from being printed out
+deploy: # The @ sign helps to mask the command (and the private key) from being printed out in the console
 	@forge script script/DeployRaffle.s.sol:DeployRaffle $(NETWORK_ARGS)
 
 createSubscription:
@@ -51,3 +52,12 @@ addConsumer:
 
 fundSubscription:
 	@forge script script/Interactions.s.sol:FundSubscription $(NETWORK_ARGS)
+
+enterRaffle:
+	@cast send $(DEPLOYED_CONTRACT_ADDRESS) "enterRaffle()" --value 0.03ether --private-key $(PRIVATE_KEY) --rpc-url $(SEPOLIA_RPC_URL)
+
+flatten:
+	forge flatten --output src/Raffle.flattened.sol src/Raffle.sol
+
+verify_on_Sepolia:
+	@forge verify-contract --verifier etherscan --verifier-url https://sepolia.etherscan.io/api --etherscan-api-key $(ETHERSCAN_API_KEY) --chain sepolia --flatten $(DEPLOYED_CONTRACT_ADDRESS) src/Raffle.sol:Raffle

@@ -1,3 +1,5 @@
+# Foundry smart contract Raffle
+
 ## Layout of Contract
 
 1. Version
@@ -70,4 +72,36 @@ Sample output of 256 tests: [PASS] testFulfillRandomWordsCanOnlyBeCalledAfterPer
 - Integration
 - Forked
 - Staging <-- run tests on a mainnet/testnet
-11.
+11. How to debug at line level with Opcodes:
+```bash
+forge test --debug <test_name>
+forge test --debug testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep
+```
+12. How to use [Chainlink Automation](https://automation.chain.link/) to perform Upkeep on Sepolia:
+- Contract address: 0xdbfda4b19ff56230a75a11ef4011eaeb63181867, and typically contract needs to be verified
+- Choose custom logic on Chainlink automation and enter the contract address
+- Type in the Upkeep name and the amount of LINK to fund the Upkeep and confirm the transaction through wallet
+- [Transaction went through](https://sepolia.etherscan.io/tx/0xb7dacc64d9ad0be1663b64b6c2acd96b764b7c6f4f118307800b256d09054e12)
+- Can check the Upkeep info through the UI
+- After deploying, can use the code below to enter the Raffle:
+```bash
+cast send $DEPLOYED_CONTRACT_ADDRESS "enterRaffle()" --value 0.03ether --private-key $PRIVATE_KEY --rpc-url $SEPOLIA_RPC_URL
+```
+- [Successfully entered raffle transaction](https://sepolia.etherscan.io/tx/0xd0a18d88550519785fbce659979737f4ef97c0f48bb01d0fd823b076153db886)
+13. How to verify contract on Etherscan [guide](https://docs.etherscan.io/v/sepolia-etherscan/api-endpoints/contracts):
+<details>
+<summary>13A. With the UI on Etherscan:</summary>
+- Go to the contract address<br>
+- Flatten the source code into one file<br>
+- Upload the file and fill in necessary info<br>
+- Verify<br>
+</details>
+<details>
+<summary>13B. With the command line:</summary>
+- Flatten the source code into one file<br>
+- See Makefile to modify the detailed command<br>
+- Run the command below<br>
+<pre>
+make verify_on_Sepolia
+</pre>
+</details>
